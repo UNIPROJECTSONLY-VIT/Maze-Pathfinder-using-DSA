@@ -46,10 +46,10 @@ bool run_bfs(const vector<string>& maze, vector<string>& out)
     {
         for (int j = 0; j < W; j++) 
         {
-            if (maze[i][j] == 'S') 
-                S = {i, j};
-            if (maze[i][j] == 'E') 
-                E = {i, j};
+            if (maze[i][j] == 'S') {
+                S = {i, j};}
+            if (maze[i][j] == 'E') {
+                E = {i, j};}
         }
     }
 
@@ -77,8 +77,8 @@ bool run_bfs(const vector<string>& maze, vector<string>& out)
         int r = cur.first;
         int c = cur.second;
 
-        if (r == E.first && c == E.second)
-            break;
+        if (r == E.first && c == E.second){
+            break;}
 
         for (int k = 0; k < 4; k++)
         {
@@ -86,9 +86,10 @@ bool run_bfs(const vector<string>& maze, vector<string>& out)
             int nc = c + dc[k];
 
             if (!inBounds(nr, nc, H, W))
+
                 continue;
-            
             if (maze[nr][nc] == '#')
+
                 continue;
 
             if (dist[nr][nc] == -1)
@@ -135,10 +136,10 @@ bool run_dijkstra(const vector<string>& maze, vector<string>& out)
     {
         for (int j = 0; j < W; j++) 
         {
-            if (maze[i][j] == 'S') 
-                S = {i, j};
-            if (maze[i][j] == 'E') 
-                E = {i, j};
+            if (maze[i][j] == 'S'){ 
+                S = {i, j};}
+            if (maze[i][j] == 'E') {
+                E = {i, j};}
         }
     }
 
@@ -212,10 +213,10 @@ bool run_dijkstra(const vector<string>& maze, vector<string>& out)
     P cur = E;
     while (cur != S)
     {
-        if (out[cur.first][cur.second] == ' ')
-            out[cur.first][cur.second] = '.';
-        else if (out[cur.first][cur.second] == '~')
-            out[cur.first][cur.second] = '*';
+        if (out[cur.first][cur.second] == ' '){
+            out[cur.first][cur.second] = '.';}
+        else if (out[cur.first][cur.second] == '~'){
+            out[cur.first][cur.second] = '*';}
         cur = parent[cur.first][cur.second];
     }
 
@@ -227,14 +228,15 @@ bool run_dijkstra(const vector<string>& maze, vector<string>& out)
 
 int main()
 {
-    vector<string> maze;
-
-    maze.push_back("#########");
-    maze.push_back("#S # ~ E#");
-    maze.push_back("#  # #  #");
-    maze.push_back("#  ~~ # #");
-    maze.push_back("#########");
-
+    
+    vector<string> maze = {
+        "#########",
+        "#S # ~ E#",
+        "#  # #  #",
+        "#  ~~ # #",
+        "#########"
+    };
+    
     // check weight or na
     bool hasWeights = false;
     for (int i = 0; i < maze.size(); i++)
@@ -253,10 +255,10 @@ int main()
     // auto detect 
     if (mode.empty())
     {
-        if (hasWeights)
-            mode = "dijkstra";
-        else
-            mode = "bfs";
+        if (hasWeights){
+            mode = "dijkstra";}
+        else{
+            mode = "bfs";}
 
         cout << "Auto-chosen: " << mode << endl;
     }
@@ -277,10 +279,11 @@ int main()
     else
     {
         cout << "Invalid option entered using auto-detect mode " << endl;
-        if (hasWeights)
+        if (hasWeights){
             ok = run_dijkstra(maze, solved);
-        else
-            ok = run_bfs(maze, solved);
+        }
+        else{
+            ok = run_bfs(maze, solved);}
     }
 
     if (ok)
