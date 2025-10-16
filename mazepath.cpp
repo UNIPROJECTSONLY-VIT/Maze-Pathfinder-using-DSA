@@ -149,7 +149,7 @@ bool run_dijkstra(const vector<string>& maze, vector<string>& out)
         return false;
     }
 
-    const int INF = INF_MAX;
+    const int INF = 1e9;
     vector<vector<int>> dist(H, vector<int>(W, INF));
     vector<vector<P>> parent(H, vector<P>(W, {-1, -1}));
 
