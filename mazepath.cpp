@@ -13,14 +13,13 @@ bool inBounds(int r, int c, int H, int W)
     }
     if (r >= H) {
         return false;
-    }
+    }   
     if (c >= W) {
         return false;
     }
     return true;
 }
-
-static inline int costOf(char ch){
+inline int costOf(char ch){
     if(ch == '#')
         return 100000;  
     else if(ch == '~')
@@ -110,7 +109,7 @@ bool run_bfs(const vector<string>& maze, vector<string>& out)
 
     P cur = E;
     while (cur != S)
-    {
+    {   
         if (out[cur.first][cur.second] == ' ')
             out[cur.first][cur.second] = '.';
         if (out[cur.first][cur.second] == '~')
@@ -154,7 +153,7 @@ bool run_dijkstra(const vector<string>& maze, vector<string>& out)
     vector<vector<P>> parent(H, vector<P>(W, {-1, -1}));
 
     typedef pair<int, P> Node;
-    priority_queue<Node, vector<Node>, greater<Node>> pq;
+    priority_queue<Node, vector<Node>, greater<Node>> pq; // {distance , {i,j}}
 
     dist[S.first][S.second] = 0;
     pq.push({0, S});
@@ -192,7 +191,7 @@ bool run_dijkstra(const vector<string>& maze, vector<string>& out)
                 continue;
 
             int w = costOf(ch);
-
+ 
             if (dist[r][c] + w < dist[nr][nc])
             {
                 dist[nr][nc] = dist[r][c] + w;
@@ -226,17 +225,82 @@ bool run_dijkstra(const vector<string>& maze, vector<string>& out)
 
 
 
+void seed(int n,int H, int W,vector<string>&grid){
+    std::mt19937 rng(n);
+    pair<P,P> choose = {{-1,-1},{-1,-1}};
+
+    double wallr = 0.55; //ratio wall
+    double blankr = 0.30; //ratio blank
+
+    int wallc = floor(wallr * H*W);
+    int blankc = floor(blankr * H*W);
+    int curvec = H*W - wallc - blankc;
+
+    vector<char>pool;
+    pool.reserve(H*W);
+    for (int i = 0; i < wallc; ++i) pool.push_back('#');
+    for (int i = 0; i < blankc; ++i) pool.push_back(' ');
+    for (int i = 0; i < curvec; ++i) pool.push_back('~');
+
+    std::shuffle(pool.begin(), pool.end(), rng);
+    int k = 0;
+    for (int i = 0; i < H; ++i){
+        for (int j = 0; j < W; ++j){
+            grid[i][j] = pool[k++];}}
+
+
+    uniform_int_distribution<int> rows(0,H-1);
+    uniform_int_distribution<int> cols(0,W-1);
+    choose = {{rows(rng),cols(rng)},{rows(rng),cols(rng)}};
+
+    grid[choose.first.first][choose.first.second] = 'S';
+    grid[choose.second.first][choose.second.second] = 'E';
+
+
+}
+
+
+
 int main()
 {
-    
-    vector<string> maze = {
+    vector<string> maze;
+    cout<<"Default(d) or Seed(s) : ";
+    string opt;
+    cin>>opt;
+
+    if(opt == "d"){
+         maze = {
         "#########",
         "#S # ~ E#",
         "#  # #  #",
         "#  ~~ # #",
         "#########"
+
     };
-    
+    }
+    else if (opt == "s"){
+        int H = 4;
+        int W =5;
+        maze.assign(H,string(W,' '));
+        cout <<"Choose seed for maze: ";
+        int n ;
+        cin>>n;
+        seed(n,H,W,maze);
+    }
+
+    else{
+        cout<<"Invalid option using default maze";
+        maze = {
+        "#########",
+        "#S # ~ E#",
+        "#  # #  #",
+        "#  ~~ # #",
+        "#########"
+
+    };
+
+    }
+
     // check weight or na
     bool hasWeights = false;
     for (int i = 0; i < maze.size(); i++)
@@ -247,8 +311,10 @@ int main()
             break;
         }
     }
+    
 
     cout << "Choose algorithm (bfs/dijkstra) or press enter for auto: ";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     string mode;
     getline(cin, mode);
 
@@ -296,6 +362,10 @@ int main()
     }
     else
     {
+        for(int i = 0; i < maze.size();i++)
+        {
+            cout<<maze[i] << endl;
+        }
         cout << "No path found in this maze " << endl;
     }
 
